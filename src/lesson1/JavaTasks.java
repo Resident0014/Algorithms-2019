@@ -2,6 +2,11 @@ package lesson1;
 
 import kotlin.NotImplementedError;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.*;
+
 @SuppressWarnings("unused")
 public class JavaTasks {
     /**
@@ -64,8 +69,67 @@ public class JavaTasks {
      *
      * В случае обнаружения неверного формата файла бросить любое исключение.
      */
+
+    // Память O(n), Ресурсоемкость (nlogn)
     static public void sortAddresses(String inputName, String outputName) {
-        throw new NotImplementedError();
+
+
+        Scanner sc;
+        try {
+            sc = new Scanner(new File(inputName));
+        }
+        catch (FileNotFoundException e) {
+            throw new RuntimeException("Input file not found");
+        }
+        TreeMap<String, TreeSet<String>> res = new TreeMap<>((o1, o2) -> {
+            if (o1.equals(o2)) {
+                return 0;
+            }
+            String[] addr1 = o1.split(" ");
+            String[] addr2 = o2.split(" ");
+            int compStreet = addr1[0].compareTo(addr2[0]);
+            if (compStreet == 0) {
+                return Integer.parseInt(addr1[1]) - Integer.parseInt(addr2[1]);
+            }
+            else {
+                return compStreet;
+            }
+        });
+        while (sc.hasNext()) {
+            String[] lineParts = sc.nextLine().split(" - ");
+            String name = lineParts[0];
+            String addr = lineParts[1];
+            if (res.containsKey(addr)) {
+                res.get(addr).add(name);
+            }
+            else {
+                TreeSet<String> names = new TreeSet<>();
+                names.add(name);
+                res.put(addr, names);
+            }
+        }
+        sc.close();
+        PrintWriter pw;
+        try {
+            pw = new PrintWriter(outputName);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error opening output file");
+        }
+        for (Map.Entry<String, TreeSet<String>> e : res.entrySet()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(e.getKey()).append(" - ");
+            boolean first = true;
+            for (String name : e.getValue()) {
+                if (!first) {
+                    sb.append(", ");
+                }
+                sb.append(name);
+                first = false;
+            }
+            pw.println(sb.toString());
+        }
+        pw.close();
+
     }
 
     /**
@@ -98,8 +162,28 @@ public class JavaTasks {
      * 99.5
      * 121.3
      */
+    // Память O(n), Ресурсоемкость O(nlogn)
     static public void sortTemperatures(String inputName, String outputName) {
-        throw new NotImplementedError();
+        Scanner sc;
+        try {
+            sc = new Scanner(new File(inputName));
+        }
+        catch (FileNotFoundException e) {
+            throw new RuntimeException("Input file not found");
+        }
+        ArrayList<Float> list = new ArrayList<>();
+        while (sc.hasNext()) list.add(Float.parseFloat(sc.nextLine()));
+        Collections.sort(list);
+        PrintWriter pw;
+        try {
+            pw = new PrintWriter(outputName);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error opening output file");
+        }
+        for (float f : list) {
+            pw.println(String.format(Locale.US, "%.1f", f));
+        }
+        pw.close();
     }
 
     /**
@@ -131,8 +215,44 @@ public class JavaTasks {
      * 2
      * 2
      */
+    // Память = O(n), Ресурсоемкость = O(n)
     static public void sortSequence(String inputName, String outputName) {
-        throw new NotImplementedError();
+        Scanner sc;
+        try {
+            sc = new Scanner(new File(inputName));
+        }
+        catch (FileNotFoundException e) {
+            throw new RuntimeException("Input file not found");
+        }
+        ArrayList<Integer> list = new ArrayList<>();
+        HashMap<Integer, Integer> map = new HashMap<>();
+        while (sc.hasNext()) {
+            int x = Integer.parseInt(sc.nextLine());
+            list.add(x);
+            map.put(x, map.getOrDefault(x, 0) + 1);
+        }
+        int maxCount = Collections.max(map.values());
+        int minNumber = Integer.MAX_VALUE;
+        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
+            if (e.getValue() == maxCount && e.getKey() < minNumber) {
+                minNumber = e.getKey();
+            }
+        }
+        PrintWriter pw;
+        try {
+            pw = new PrintWriter(outputName);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Error opening output file");
+        }
+        for (int x : list) {
+            if (x != minNumber) {
+                pw.println(x);
+            }
+        }
+        for (int i = 0; i < maxCount; i++) {
+            pw.println(minNumber);
+        }
+        pw.close();
     }
 
     /**
