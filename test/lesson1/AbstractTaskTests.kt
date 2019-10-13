@@ -73,6 +73,12 @@ abstract class AbstractTaskTests : AbstractFileTests() {
         } finally {
             File("temp.txt").delete()
         }
+        try {
+            sortAddresses("input/addr_in4.txt", "temp.txt")
+            assertFileContent("temp.txt", File("input/addr_out4.txt").readLines())
+        } finally {
+            File("temp.txt").delete()
+        }
     }
 
     private fun generateTemperatures(size: Int): PerfResult<Unit> {
@@ -113,6 +119,28 @@ abstract class AbstractTaskTests : AbstractFileTests() {
                     24.7
                     99.5
                     121.3
+                """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        }
+
+        try {
+            sortTemperatures("input/temp_in2.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                    -250.0
+                    -77.6
+                    -77.0
+                    -55.5
+                    -32.7
+                    21.3
+                    65.6
+                    65.6
+                    65.6
+                    250.2
+                    250.5
                 """.trimIndent()
             )
         } finally {
@@ -272,6 +300,27 @@ abstract class AbstractTaskTests : AbstractFileTests() {
                         41
                         32
                         32
+                    """.trimIndent()
+            )
+        } finally {
+            File("temp.txt").delete()
+        }
+        try {
+            sortSequence("input/seq_in6.txt", "temp.txt")
+            assertFileContent(
+                "temp.txt",
+                """
+                        2222
+                        2222
+                        5342
+                        3212
+                        2222
+                        4555
+                        2323
+                        3421
+                        1111
+                        1111
+                        1111
                     """.trimIndent()
             )
         } finally {
