@@ -161,6 +161,13 @@ public class JavaAlgorithms {
      * В файле буквы разделены пробелами, строки -- переносами строк.
      * Остальные символы ни в файле, ни в словах не допускаются.
      */
+    // Память O(n*m*x)
+    // Ресурсоемкость O(k*m*n*(x^4))
+    // n - кол-во строк
+    // m - кол-ва столбцов
+    // k - кол-во слов
+    // x - длина слова
+
     static public Set<String> baldaSearcher(String inputName, Set<String> words) {
         BufferedReader br;
         try {
