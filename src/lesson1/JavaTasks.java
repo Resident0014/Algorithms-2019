@@ -71,6 +71,7 @@ public class JavaTasks {
      */
 
     // Память O(n), Ресурсоемкость (nlogn)
+    //n - кол-во строк в файле
     static public void sortAddresses(String inputName, String outputName) {
 
 
