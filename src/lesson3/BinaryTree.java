@@ -24,9 +24,38 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     private Node<T> root = null;
 
     private int size = 0;
+    private BinaryTree<T> topTree = this;
+    private ArrayList<BinaryTree<T>> subTrees = new ArrayList<>();
+    private T min = null;
+    private T max = null;
+
+    public BinaryTree() {}
+
+    private BinaryTree(BinaryTree<T> tree, T min, T max) {
+        this.min = min;
+        this.max = max;
+        for (T t : tree) {
+            try {
+                this.add(t);
+            }
+            catch (IllegalArgumentException e) {
+
+            }
+        }
+        this.topTree = tree.topTree;
+
+        this.topTree.subTrees.add(this);
+    }
+
 
     @Override
     public boolean add(T t) {
+        if (min != null && t.compareTo(min) < 0 || max != null && t.compareTo(max) >= 0) {
+            throw new IllegalArgumentException();
+        }
+        if (this != topTree && topTree.add(t)) {
+            return true;
+        }
         Node<T> closest = find(t);
         int comparison = closest == null ? -1 : t.compareTo(closest.value);
         if (comparison == 0) {
@@ -45,6 +74,14 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
             closest.right = newNode;
         }
         size++;
+        for (BinaryTree<T> sub : subTrees) {
+            try {
+                sub.add(t);
+            }
+            catch (IllegalArgumentException e) {
+
+            }
+        }
         return true;
     }
 
@@ -149,6 +186,9 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     public boolean contains(Object o) {
         @SuppressWarnings("unchecked")
         T t = (T) o;
+        if (min != null && t.compareTo(min) < 0 || max != null && t.compareTo(max) >= 0) {
+            return false;
+        }
         Node<T> closest = find(t);
         return closest != null && t.compareTo(closest.value) == 0;
     }
@@ -249,8 +289,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     @NotNull
     @Override
     public SortedSet<T> subSet(T fromElement, T toElement) {
-        // TODO
-        throw new NotImplementedError();
+        return new BinaryTree<>(this, fromElement, toElement);
     }
 
     /**
@@ -260,14 +299,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     @NotNull
     @Override
     public SortedSet<T> headSet(T toElement) {  // время: O(n ^ 2), память: O(n)
-        BinaryTree<T> tree = new BinaryTree<>();
-        for (T e : this) {
-            if (e.compareTo(toElement) >= 0) {
-                break;
-            }
-            tree.add(e);
-        }
-        return tree;
+        return new BinaryTree<>(this, min, toElement);
     }
 
     /**
@@ -277,19 +309,7 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     @NotNull
     @Override
     public SortedSet<T> tailSet(T fromElement) {  // время: O(n ^ 2), по память: O(n)
-        BinaryTree<T> tree = new BinaryTree<>();
-        Iterator<T> it = iterator();
-        while (it.hasNext()) {
-            T e = it.next();
-            if (e.compareTo(fromElement) >= 0) {
-                tree.add(e);
-                break;
-            }
-        }
-        while (it.hasNext()) {
-            tree.add(it.next());
-        }
-        return tree;
+        return new BinaryTree<>(this, fromElement, max);
     }
 
     @Override

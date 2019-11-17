@@ -3,6 +3,7 @@ package lesson3
 import org.junit.jupiter.api.Tag
 import kotlin.test.Test
 import java.util.*
+import kotlin.NoSuchElementException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -82,6 +83,19 @@ class BinaryTreeTest {
                 "After removal of $toRemove from $list binary tree height increased"
             )
         }
+
+        //мой тест
+        val binSet = create()
+
+        binSet += 8
+        assertFalse(binSet.remove(2))
+        assertEquals(1, binSet.size)
+
+        val binSet1 = create()
+        assertFalse(binSet1.remove(7))
+        assertEquals(0, binSet1.size)
+
+
     }
 
     @Test
@@ -126,6 +140,21 @@ class BinaryTreeTest {
                     "Call of iterator.hasNext() changes its state while iterating $treeSet"
                 )
             }
+        }
+        //мой тест
+        val binSet = create()
+        val it = binSet.iterator()
+        binSet += 1
+        binSet += 3
+        binSet += 5
+        binSet += 7
+        binSet += 9
+        try {
+            for (item in 0..binSet.size) it.next()
+        } catch (ex: EmptyStackException) {
+
+        } finally {
+            assertFalse(it.hasNext())
         }
     }
 
