@@ -38,7 +38,7 @@ abstract class AbstractGraphTests {
             addConnection(a, b)
         }.build()
         val simpleLoop = simpleGraph.findEulerLoop()
-        simpleLoop.assert(shouldExist = false, graph = simpleGraph)
+        simpleLoop.assert(shouldExist = true, graph = simpleGraph)
         val unconnected = GraphBuilder().apply {
             val a = addVertex("A")
             val b = addVertex("B")
